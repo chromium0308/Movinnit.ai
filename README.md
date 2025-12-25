@@ -112,6 +112,7 @@ npm run dev
    - This is your `OPENAI_API_KEY`
 
 4. **Configure Environment Variables in Railway:**
+   - **Quick Setup:** See `RAILWAY_ENV.md` for exact values to copy-paste into Railway
    - In your Railway project dashboard, click on your service
    - Go to the "Variables" tab
    - Click "New Variable" for each of the following:

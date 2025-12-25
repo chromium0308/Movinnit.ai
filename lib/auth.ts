@@ -13,14 +13,22 @@ import { createUserProfile } from './user-profile';
 
 function ensureAuth() {
   if (!auth) {
-    throw new Error('Firebase Auth is not initialized. Please check your .env.local file and ensure all Firebase configuration values are set correctly.');
+    const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID;
+    const errorMessage = isRailway
+      ? 'Firebase Auth is not initialized. Please check Railway Variables tab and ensure all NEXT_PUBLIC_FIREBASE_* environment variables are set. See RAILWAY_ENV.md for exact values.'
+      : 'Firebase Auth is not initialized. Please check your .env.local file and ensure all Firebase configuration values are set correctly.';
+    throw new Error(errorMessage);
   }
   return auth;
 }
 
 function ensureDatabase() {
   if (!database) {
-    throw new Error('Firebase Database is not initialized. Please check your .env.local file and ensure all Firebase configuration values are set correctly.');
+    const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID;
+    const errorMessage = isRailway
+      ? 'Firebase Database is not initialized. Please check Railway Variables tab and ensure all NEXT_PUBLIC_FIREBASE_* environment variables are set. See RAILWAY_ENV.md for exact values.'
+      : 'Firebase Database is not initialized. Please check your .env.local file and ensure all Firebase configuration values are set correctly.';
+    throw new Error(errorMessage);
   }
   return database;
 }
