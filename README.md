@@ -1,6 +1,8 @@
-# MovInit - Migration Guidance Web App
+# Movinnit.ai
 
 A Next.js web application that helps users understand and complete the steps required to migrate to another country. Built with TypeScript, Tailwind CSS, Firebase, and OpenAI integration.
+
+A webapp that helps you plan a move helping you through any government related paperwork that may be required :)
 
 ## Features
 
