@@ -17,8 +17,8 @@ A webapp that helps you plan a move helping you through any government related p
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- npm package manager
+- Node.js 20.9.0 or higher (required for Next.js 16)
+- npm 10.0.0 or higher
 - Firebase project with Realtime Database enabled
 - OpenAI API key
 
@@ -139,7 +139,7 @@ npm run dev
 **Build Failures:**
 - Check Railway logs for specific error messages
 - Ensure all dependencies are listed in `package.json`
-- Verify Node.js version compatibility (Railway uses Node 18+ by default)
+- **Node.js Version:** The app requires Node.js >=20.9.0. Railway should auto-detect this from `package.json` engines field, `.nvmrc`, or `.node-version` files. If issues persist, manually set `NODE_VERSION=20` in Railway environment variables.
 
 **Environment Variable Issues:**
 - Double-check all environment variables are set in Railway (case-sensitive)
