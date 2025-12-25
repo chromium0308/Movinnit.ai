@@ -30,21 +30,29 @@ npm install
 ```
 
 2. Set up environment variables:
-Create a `.env.local` file in the root directory with the following variables:
+   Create a `.env.local` file in the root directory with the following variables:
+   
+   **To get Firebase configuration:**
+   - Go to [Firebase Console](https://console.firebase.google.com) → Your Project → Project Settings → Your apps
+   - Copy values from the `firebaseConfig` object
+   
+   **To get OpenAI API key:**
+   - Go to [OpenAI Platform](https://platform.openai.com/api-keys)
+   - Create a new secret key and copy it
 
-```env
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your_project-default-rtdb.firebaseio.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   ```env
+   # Firebase Configuration (from Firebase Console)
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your_project-default-rtdb.firebaseio.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-# OpenAI API Key
-OPENAI_API_KEY=your_openai_api_key
-```
+   # OpenAI API Key (from OpenAI Platform)
+   OPENAI_API_KEY=your_openai_api_key
+   ```
 
 3. Configure Firebase:
    - Enable Firebase Authentication (Email/Password)
@@ -76,41 +84,73 @@ npm run dev
    - Authorize Railway to access your GitHub account
    - Select the `chromium0308/Movinnit.ai` repository
 
-2. **Configure Environment Variables:**
-   - In your Railway project, go to the "Variables" tab
-   - Add all the following environment variables:
+2. **Get Your Firebase Configuration:**
+   - Go to [Firebase Console](https://console.firebase.google.com)
+   - Select your project (or create a new one)
+   - Click the gear icon ⚙️ next to "Project Overview" → "Project settings"
+   - Scroll down to "Your apps" section
+   - If you don't have a web app, click "Add app" → Web (</>) icon
+   - Copy the configuration values from the `firebaseConfig` object:
+     ```javascript
+     const firebaseConfig = {
+       apiKey: "AIza...",           // → NEXT_PUBLIC_FIREBASE_API_KEY
+       authDomain: "...",           // → NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+       databaseURL: "https://...",  // → NEXT_PUBLIC_FIREBASE_DATABASE_URL
+       projectId: "...",            // → NEXT_PUBLIC_FIREBASE_PROJECT_ID
+       storageBucket: "...",        // → NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+       messagingSenderId: "...",   // → NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+       appId: "1:..."               // → NEXT_PUBLIC_FIREBASE_APP_ID
+     };
+     ```
 
-   ```env
-   # Firebase Configuration
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your_project-default-rtdb.firebaseio.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+3. **Get Your OpenAI API Key:**
+   - Go to [OpenAI Platform](https://platform.openai.com/api-keys)
+   - Sign in or create an account
+   - Click "Create new secret key"
+   - Give it a name (e.g., "Movinnit Production")
+   - Copy the key immediately (you won't be able to see it again)
+   - This is your `OPENAI_API_KEY`
 
-   # OpenAI API Key
-   OPENAI_API_KEY=your_openai_api_key
-   ```
+4. **Configure Environment Variables in Railway:**
+   - In your Railway project dashboard, click on your service
+   - Go to the "Variables" tab
+   - Click "New Variable" for each of the following:
+   
+   **Firebase Variables (all required):**
+   - `NEXT_PUBLIC_FIREBASE_API_KEY` = (paste your Firebase apiKey)
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` = (paste your Firebase authDomain)
+   - `NEXT_PUBLIC_FIREBASE_DATABASE_URL` = (paste your Firebase databaseURL)
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID` = (paste your Firebase projectId)
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` = (paste your Firebase storageBucket)
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` = (paste your Firebase messagingSenderId)
+   - `NEXT_PUBLIC_FIREBASE_APP_ID` = (paste your Firebase appId)
+   
+   **OpenAI Variable (required):**
+   - `OPENAI_API_KEY` = (paste your OpenAI API key)
+   
+   **Important Notes:**
+   - Variable names are case-sensitive - use exact names shown above
+   - Do NOT include quotes around the values
+   - After adding variables, Railway will automatically redeploy
+   - All `NEXT_PUBLIC_*` variables are exposed to the browser (this is safe for Firebase config)
 
-3. **Configure Build Settings:**
+5. **Configure Build Settings:**
    - Railway will auto-detect Next.js
    - Build Command: `npm run build` (auto-detected)
    - Start Command: `npm start` (auto-detected)
    - Root Directory: `/` (default)
 
-4. **Update Firebase Authorized Domains:**
+6. **Update Firebase Authorized Domains:**
    - Go to Firebase Console → Authentication → Settings → Authorized domains
    - Add your Railway domain (e.g., `your-app.up.railway.app`)
    - If you set up a custom domain, add that as well
 
-5. **Deploy:**
+7. **Deploy:**
    - Railway will automatically build and deploy your app
    - The deployment will start automatically when you push to the main branch
    - You can also trigger manual deployments from the Railway dashboard
 
-6. **Set Up Custom Domain (Optional):**
+8. **Set Up Custom Domain (Optional):**
    - In Railway, go to your service → Settings → Domains
    - Click "Generate Domain" or "Add Custom Domain"
    - Follow the DNS configuration instructions
@@ -144,7 +184,11 @@ npm run dev
 **Environment Variable Issues:**
 - Double-check all environment variables are set in Railway (case-sensitive)
 - Ensure `NEXT_PUBLIC_*` variables are set (required for client-side access)
-- Restart the service after adding/updating environment variables
+- **Verify variable names match exactly** (no extra spaces, correct capitalization)
+- **Do NOT include quotes** around values in Railway (e.g., use `sk-proj-...` not `"sk-proj-..."`)
+- After adding/updating environment variables, Railway will automatically redeploy
+- If variables aren't working, check Railway logs for "Missing environment variables" errors
+- Common mistake: Using `FIREBASE_API_KEY` instead of `NEXT_PUBLIC_FIREBASE_API_KEY` (the `NEXT_PUBLIC_` prefix is required!)
 
 **Firebase Authentication Errors:**
 - Verify your Railway domain is added to Firebase Authorized Domains
