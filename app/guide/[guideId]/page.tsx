@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { updateGuideStep, Guide } from '@/lib/database';
 import { ref, onValue, off } from 'firebase/database';
@@ -8,6 +8,14 @@ import { database } from '@/lib/firebase';
 import AuthGuard from '@/components/AuthGuard';
 import Chatbot from '@/components/Chatbot';
 import Navbar from '@/components/Navbar';
+import { Confetti, type ConfettiRef } from '@/components/ui/confetti';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 function GuideContent() {
   const params = useParams();
@@ -17,6 +25,8 @@ function GuideContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const confettiRef = useRef<ConfettiRef>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (!database) {
@@ -28,7 +38,7 @@ function GuideContent() {
     }
 
     const guideRef = ref(database, `guides/${guideId}`);
-    
+
     const unsubscribe = onValue(guideRef, (snapshot) => {
       if (snapshot.exists()) {
         const guideData = snapshot.val() as Guide;
@@ -36,6 +46,15 @@ function GuideContent() {
         // Set current step to the first incomplete step or the last step
         const firstIncomplete = guideData.steps.findIndex(s => !s.completed);
         setCurrentStepIndex(firstIncomplete >= 0 ? firstIncomplete : guideData.steps.length - 1);
+
+        // Check if all steps are completed and fire confetti if so
+        const allCompleted = guideData.steps.every(s => s.completed);
+        if (allCompleted) {
+          setTimeout(() => {
+            confettiRef.current?.fire({});
+          }, 500);
+        }
+
         setLoading(false);
       } else {
         setError('Guide not found');
@@ -53,12 +72,18 @@ function GuideContent() {
 
   const handleStepToggle = async (stepNumber: number, completed: boolean) => {
     if (!guide) return;
-    
+
     try {
       await updateGuideStep(guideId, stepNumber, completed);
       // Move to next step if completed
-      if (completed && currentStepIndex < guide.steps.length - 1) {
-        setCurrentStepIndex(currentStepIndex + 1);
+      if (completed) {
+        if (currentStepIndex < guide.steps.length - 1) {
+          setCurrentStepIndex(currentStepIndex + 1);
+        } else {
+          // Last step completed - fire confetti and show modal!
+          confettiRef.current?.fire({});
+          setShowSuccessModal(true);
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update step';
@@ -101,6 +126,31 @@ function GuideContent() {
     <div className="min-h-screen">
       <Navbar />
 
+      <Confetti
+        ref={confettiRef}
+        className="pointer-events-none fixed inset-0 z-50 h-full w-full"
+        manualstart={true}
+      />
+
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="sm:max-w-md bg-zinc-900 border-zinc-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-center">Congratulations! 🎉</DialogTitle>
+            <DialogDescription className="text-center text-zinc-400 text-lg pt-4">
+              You have successfully verified your move to {guide?.destination}!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center p-4">
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="px-6 py-2 rounded-full bg-white text-black hover:bg-white/90 transition-colors font-medium"
+            >
+              Continue
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 pt-24">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Main Content */}
@@ -122,7 +172,7 @@ function GuideContent() {
                   <span>{Math.round(progress)}% Complete</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-white h-2 rounded-full transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   />
@@ -135,13 +185,12 @@ function GuideContent() {
                   <button
                     key={step.step}
                     onClick={() => setCurrentStepIndex(index)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      index === currentStepIndex
-                        ? 'bg-white text-black'
-                        : step.completed
+                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${index === currentStepIndex
+                      ? 'bg-white text-black'
+                      : step.completed
                         ? 'bg-green-500/20 text-green-400 border border-green-500/50'
                         : 'bg-white/5 text-gray-400 border border-white/10'
-                    }`}
+                      }`}
                   >
                     {step.step}
                   </button>

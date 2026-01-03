@@ -53,7 +53,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm px-4">
           <div className="space-y-5 text-center">
             <div className="space-y-1">
-              <h1 className="text-[3.5rem] md:text-[4rem] font-bold leading-[1.1] tracking-tight text-white">Welcome to Movinnit</h1>
+              <h1 className="text-[3.5rem] md:text-[4rem] font-bold leading-[1.1] tracking-tight text-white">Welcome to Movin&apos; it</h1>
               <p className="text-base md:text-lg text-white/70 font-light whitespace-nowrap">Your migration paperwork assistant</p>
             </div>
 
@@ -75,7 +75,7 @@ export default function LoginPage() {
                   disabled={loading}
                 />
               </div>
-              
+
               <div className="relative">
                 <input
                   type="password"

@@ -7,6 +7,7 @@ export interface UserProfile {
   firstName?: string;
   lastName?: string;
   nationalities: string[];
+  movingReason?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,7 +24,8 @@ export const createUserProfile = async (
   email: string,
   firstName: string,
   lastName: string,
-  nationalities: string[]
+  nationalities: string[],
+  movingReason?: string
 ): Promise<void> => {
   const profile: UserProfile = {
     uid,
@@ -31,10 +33,11 @@ export const createUserProfile = async (
     firstName,
     lastName,
     nationalities,
+    movingReason,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  
+
   await set(ref(ensureDatabase(), `users/${uid}`), profile);
 };
 
@@ -48,14 +51,14 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
 
 export const updateUserProfile = async (
   uid: string,
-  updates: Partial<Pick<UserProfile, 'firstName' | 'lastName' | 'nationalities'>>
+  updates: Partial<Pick<UserProfile, 'firstName' | 'lastName' | 'nationalities' | 'movingReason'>>
 ): Promise<void> => {
   const db = ensureDatabase();
   const profileUpdates: Record<string, unknown> = {
     ...updates,
     updatedAt: new Date().toISOString(),
   };
-  
+
   await update(ref(db, `users/${uid}`), profileUpdates);
 };
 

@@ -41,7 +41,7 @@ export default function SignUpPage() {
   useEffect(() => {
     if (nationalitySearch.trim().length > 0) {
       const searchTerm = nationalitySearch.toLowerCase();
-      const filtered = ALL_NATIONALITIES.filter(nat => 
+      const filtered = ALL_NATIONALITIES.filter(nat =>
         nat.toLowerCase().includes(searchTerm) && !nationalities.includes(nat)
       );
       setNationalitySuggestions(filtered.slice(0, 8)); // Limit to 8 suggestions
@@ -85,7 +85,7 @@ export default function SignUpPage() {
       }
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedNationalityIndex(prev => 
+      setSelectedNationalityIndex(prev =>
         prev < nationalitySuggestions.length - 1 ? prev + 1 : prev
       );
     } else if (e.key === 'ArrowUp') {
@@ -158,7 +158,7 @@ export default function SignUpPage() {
         <div className="w-full max-w-md px-4">
           <div className="space-y-6 text-center">
             <div className="space-y-1">
-              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">Welcome to Movinnit</h1>
+              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">Welcome to Movin&apos; it</h1>
               <p className="text-[1.8rem] text-white/70 font-light">Your migration paperwork assistant</p>
             </div>
 
@@ -204,7 +204,7 @@ export default function SignUpPage() {
                   disabled={loading}
                 />
               </div>
-              
+
               <div className="relative">
                 <input
                   type="password"
@@ -262,11 +262,10 @@ export default function SignUpPage() {
                 {/* Nationality Search */}
                 <div className="relative">
                   <div
-                    className={`relative overflow-hidden border transition-all duration-300 ease-in-out ${
-                      isNationalityInputFocused
+                    className={`relative overflow-hidden border transition-all duration-300 ease-in-out ${isNationalityInputFocused
                         ? 'border-white shadow-lg shadow-white/20 bg-white/10'
                         : 'border-white/10 hover:border-white/50 bg-white/5'
-                    }`}
+                      }`}
                     onMouseEnter={() => setIsNationalityInputFocused(true)}
                     onMouseLeave={() => setIsNationalityInputFocused(false)}
                   >
@@ -291,21 +290,20 @@ export default function SignUpPage() {
                       className="block w-full bg-transparent px-3 py-2 text-white placeholder:text-white/50 focus:outline-none relative z-0"
                     />
                   </div>
-                  
+
                   {/* Suggestions Dropdown */}
                   {showNationalitySuggestions && nationalitySuggestions.length > 0 && (
                     <div className="absolute z-50 w-full mt-2 bg-black/95 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg max-h-64 overflow-y-auto">
                       {nationalitySuggestions.map((suggestion, index) => {
                         const isHighlighted = index === selectedNationalityIndex;
-                        
+
                         return (
                           <button
                             key={suggestion}
                             type="button"
                             onClick={() => handleNationalitySuggestionClick(suggestion)}
-                            className={`w-full text-left px-4 py-3 flex items-center justify-between hover:bg-white/10 transition-colors ${
-                              isHighlighted ? 'bg-white/10' : ''
-                            }`}
+                            className={`w-full text-left px-4 py-3 flex items-center justify-between hover:bg-white/10 transition-colors ${isHighlighted ? 'bg-white/10' : ''
+                              }`}
                             onMouseEnter={() => setSelectedNationalityIndex(index)}
                           >
                             <span className="text-white text-sm">{suggestion}</span>

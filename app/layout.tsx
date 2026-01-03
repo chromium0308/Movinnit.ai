@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MovInit - Migration Guidance",
+  title: "Movin' it - Migration Guidance",
   description: "Your personalized step-by-step migration guide powered by AI",
 };
 

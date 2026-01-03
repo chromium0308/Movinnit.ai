@@ -28,6 +28,7 @@ function ProfileContent() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [movingReason, setMovingReason] = useState('');
   const [nationalities, setNationalities] = useState<string[]>([]);
   const [nationalitySearch, setNationalitySearch] = useState('');
   const [nationalitySuggestions, setNationalitySuggestions] = useState<string[]>([]);
@@ -49,6 +50,7 @@ function ProfileContent() {
           setProfile(userProfile);
           setFirstName(userProfile.firstName || '');
           setLastName(userProfile.lastName || '');
+          setMovingReason(userProfile.movingReason || '');
           setNationalities(userProfile.nationalities || []);
         }
       }
@@ -60,7 +62,7 @@ function ProfileContent() {
   useEffect(() => {
     if (nationalitySearch.trim().length > 0) {
       const searchTerm = nationalitySearch.toLowerCase();
-      const filtered = ALL_NATIONALITIES.filter(nat => 
+      const filtered = ALL_NATIONALITIES.filter(nat =>
         nat.toLowerCase().includes(searchTerm) && !nationalities.includes(nat)
       );
       setNationalitySuggestions(filtered.slice(0, 8)); // Limit to 8 suggestions
@@ -104,7 +106,7 @@ function ProfileContent() {
       }
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedNationalityIndex(prev => 
+      setSelectedNationalityIndex(prev =>
         prev < nationalitySuggestions.length - 1 ? prev + 1 : prev
       );
     } else if (e.key === 'ArrowUp') {
@@ -146,6 +148,7 @@ function ProfileContent() {
         firstName,
         lastName,
         nationalities,
+        movingReason,
       });
       setSuccess('Profile updated successfully!');
       setTimeout(() => setSuccess(''), 3000);
@@ -229,6 +232,21 @@ function ProfileContent() {
 
             <div>
               <label className="block text-sm font-medium text-white mb-2">
+                Reason for Moving
+              </label>
+              <p className="text-sm text-gray-400 mb-2">
+                Providing a reason (e.g., Work, Study, Family) helps us tailor your paperwork guide.
+              </p>
+              <textarea
+                value={movingReason}
+                onChange={(e) => setMovingReason(e.target.value)}
+                className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/50 focus:border-white/30 focus:outline-none min-h-[80px]"
+                placeholder="Why are you planning to move?"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
                 Your Nationality/Nationalities
               </label>
               <p className="text-sm text-gray-300 mb-4">
@@ -259,11 +277,10 @@ function ProfileContent() {
               {/* Nationality Search */}
               <div className="relative">
                 <div
-                  className={`relative overflow-hidden border transition-all duration-300 ease-in-out ${
-                    isNationalityInputFocused
-                      ? 'border-white shadow-lg shadow-white/20 bg-white/10'
-                      : 'border-white/10 hover:border-white/50 bg-white/5'
-                  }`}
+                  className={`relative overflow-hidden border transition-all duration-300 ease-in-out ${isNationalityInputFocused
+                    ? 'border-white shadow-lg shadow-white/20 bg-white/10'
+                    : 'border-white/10 hover:border-white/50 bg-white/5'
+                    }`}
                   onMouseEnter={() => setIsNationalityInputFocused(true)}
                   onMouseLeave={() => setIsNationalityInputFocused(false)}
                 >
@@ -289,21 +306,20 @@ function ProfileContent() {
                     disabled={saving}
                   />
                 </div>
-                
+
                 {/* Suggestions Dropdown */}
                 {showNationalitySuggestions && nationalitySuggestions.length > 0 && (
                   <div className="absolute z-50 w-full mt-2 bg-black/95 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg max-h-64 overflow-y-auto">
                     {nationalitySuggestions.map((suggestion, index) => {
                       const isHighlighted = index === selectedNationalityIndex;
-                      
+
                       return (
                         <button
                           key={suggestion}
                           type="button"
                           onClick={() => handleNationalitySuggestionClick(suggestion)}
-                          className={`w-full text-left px-4 py-3 flex items-center justify-between hover:bg-white/10 transition-colors ${
-                            isHighlighted ? 'bg-white/10' : ''
-                          }`}
+                          className={`w-full text-left px-4 py-3 flex items-center justify-between hover:bg-white/10 transition-colors ${isHighlighted ? 'bg-white/10' : ''
+                            }`}
                           onMouseEnter={() => setSelectedNationalityIndex(index)}
                         >
                           <span className="text-white text-sm">{suggestion}</span>

@@ -33,7 +33,7 @@ interface SignInPageProps {
   isLoading?: boolean;
   error?: string;
 }
-      
+
 export const CanvasRevealEffect = ({
   animationSpeed = 10,
   opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
@@ -173,16 +173,14 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
 
         void main() {
             vec2 st = fragCoord.xy;
-            ${
-              center.includes("x")
-                ? "st.x -= abs(floor((mod(u_resolution.x, u_total_size) - u_dot_size) * 0.5));"
-                : ""
-            }
-            ${
-              center.includes("y")
-                ? "st.y -= abs(floor((mod(u_resolution.y, u_total_size) - u_dot_size) * 0.5));"
-                : ""
-            }
+            ${center.includes("x")
+          ? "st.x -= abs(floor((mod(u_resolution.x, u_total_size) - u_dot_size) * 0.5));"
+          : ""
+        }
+            ${center.includes("y")
+          ? "st.y -= abs(floor((mod(u_resolution.y, u_total_size) - u_dot_size) * 0.5));"
+          : ""
+        }
 
             float opacity = step(0.0, st.x);
             opacity *= step(0.0, st.y);
@@ -340,13 +338,13 @@ const Shader: React.FC<ShaderProps> = ({ source, uniforms, maxFps = 60 }) => {
   );
 };
 
-export const SignInPage = ({ 
-  className, 
-  onEmailSubmit, 
-  onCodeSubmit, 
+export const SignInPage = ({
+  className,
+  onEmailSubmit,
+  onCodeSubmit,
   onGoogleSignIn,
   isLoading = false,
-  error 
+  error
 }: SignInPageProps) => {
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"email" | "code" | "success">("email");
@@ -377,11 +375,11 @@ export const SignInPage = ({
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
-      
+
       if (value && index < 5) {
         codeInputRefs.current[index + 1]?.focus();
       }
-      
+
       if (index === 5 && value) {
         const isComplete = newCode.every(digit => digit.length === 1);
         if (isComplete && onCodeSubmit) {
@@ -429,7 +427,7 @@ export const SignInPage = ({
             />
           </div>
         )}
-        
+
         {reverseCanvasVisible && (
           <div className="absolute inset-0">
             <CanvasRevealEffect
@@ -444,11 +442,11 @@ export const SignInPage = ({
             />
           </div>
         )}
-        
+
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,0,0,1)_0%,_transparent_100%)]" />
         <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-black to-transparent" />
       </div>
-      
+
       <div className="relative z-10 flex flex-col flex-1">
         <div className="flex flex-1 flex-col lg:flex-row">
           <div className="flex-1 flex flex-col justify-center items-center">
@@ -460,7 +458,7 @@ export const SignInPage = ({
               )}
               <AnimatePresence mode="wait">
                 {step === "email" ? (
-                  <motion.div 
+                  <motion.div
                     key="email-step"
                     initial={{ opacity: 0, x: -100 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -469,12 +467,12 @@ export const SignInPage = ({
                     className="space-y-6 text-center"
                   >
                     <div className="space-y-1">
-                      <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">Welcome to Movinnit</h1>
+                      <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">Welcome to Movin&apos; it</h1>
                       <p className="text-[1.8rem] text-white/70 font-light">Your migration paperwork assistant</p>
                     </div>
-                    
+
                     <div className="space-y-4">
-                      <button 
+                      <button
                         onClick={onGoogleSignIn}
                         disabled={isLoading}
                         className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full py-3 px-4 transition-colors disabled:opacity-50"
@@ -482,17 +480,17 @@ export const SignInPage = ({
                         <span className="text-lg">G</span>
                         <span>Sign in with Google</span>
                       </button>
-                      
+
                       <div className="flex items-center gap-4">
                         <div className="h-px bg-white/10 flex-1" />
                         <span className="text-white/40 text-sm">or</span>
                         <div className="h-px bg-white/10 flex-1" />
                       </div>
-                      
+
                       <form onSubmit={handleEmailSubmit}>
                         <div className="relative">
-                          <input 
-                            type="email" 
+                          <input
+                            type="email"
                             placeholder="info@gmail.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -500,7 +498,7 @@ export const SignInPage = ({
                             required
                             disabled={isLoading}
                           />
-                          <button 
+                          <button
                             type="submit"
                             disabled={isLoading}
                             className="absolute right-1.5 top-1.5 text-white w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors group overflow-hidden disabled:opacity-50"
@@ -517,13 +515,13 @@ export const SignInPage = ({
                         </div>
                       </form>
                     </div>
-                    
+
                     <p className="text-xs text-white/40 pt-10">
                       By signing up, you agree to the <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">MSA</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Product Terms</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Policies</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Cookie Notice</Link>.
                     </p>
                   </motion.div>
                 ) : step === "code" ? (
-                  <motion.div 
+                  <motion.div
                     key="code-step"
                     initial={{ opacity: 0, x: 100 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -535,7 +533,7 @@ export const SignInPage = ({
                       <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">We sent you a code</h1>
                       <p className="text-[1.25rem] text-white/50 font-light">Please enter it</p>
                     </div>
-                    
+
                     <div className="w-full">
                       <div className="relative rounded-full py-4 px-5 border border-white/10 bg-transparent">
                         <div className="flex items-center justify-center">
@@ -569,9 +567,9 @@ export const SignInPage = ({
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
-                      <motion.p 
+                      <motion.p
                         className="text-white/50 hover:text-white/70 transition-colors cursor-pointer text-sm"
                         whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.2 }}
@@ -579,9 +577,9 @@ export const SignInPage = ({
                         Resend code
                       </motion.p>
                     </div>
-                    
+
                     <div className="flex w-full gap-3">
-                      <motion.button 
+                      <motion.button
                         onClick={handleBackClick}
                         disabled={isLoading}
                         className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-[30%] disabled:opacity-50"
@@ -591,23 +589,22 @@ export const SignInPage = ({
                       >
                         Back
                       </motion.button>
-                      <motion.button 
+                      <motion.button
                         onClick={() => {
                           if (code.every(d => d !== "") && onCodeSubmit) {
                             onCodeSubmit(code.join(""));
                           }
                         }}
                         disabled={!code.every(d => d !== "") || isLoading}
-                        className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
-                          code.every(d => d !== "") && !isLoading
-                          ? "bg-white text-black border-transparent hover:bg-white/90 cursor-pointer" 
-                          : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
-                        }`}
+                        className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${code.every(d => d !== "") && !isLoading
+                            ? "bg-white text-black border-transparent hover:bg-white/90 cursor-pointer"
+                            : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
+                          }`}
                       >
                         Continue
                       </motion.button>
                     </div>
-                    
+
                     <div className="pt-16">
                       <p className="text-xs text-white/40">
                         By signing up, you agree to the <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">MSA</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Product Terms</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Policies</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Cookie Notice</Link>.
@@ -615,7 +612,7 @@ export const SignInPage = ({
                     </div>
                   </motion.div>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     key="success-step"
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -626,8 +623,8 @@ export const SignInPage = ({
                       <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">You&apos;re in!</h1>
                       <p className="text-[1.25rem] text-white/50 font-light">Welcome</p>
                     </div>
-                    
-                    <motion.div 
+
+                    <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.5 }}

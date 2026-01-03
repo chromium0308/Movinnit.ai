@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import { createGuide } from '@/lib/database';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-function getOpenAIClient() {
-  const apiKey = process.env.OPENAI_API_KEY;
+function getGeminiClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENAI_API_KEY environment variable is not set');
+    throw new Error('GEMINI_API_KEY environment variable is not set');
   }
-  return new OpenAI({
-    apiKey: apiKey,
-  });
+  return new GoogleGenerativeAI(apiKey);
 }
 
 interface GuideStep {
@@ -26,13 +23,14 @@ interface GuideStep {
 interface GenerateGuideRequest {
   nationalities: string[];
   destination: string;
+  movingReason?: string;
   uid?: string; // Will be set from auth token
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateGuideRequest = await request.json();
-    const { nationalities, destination } = body;
+    const { nationalities, destination, movingReason } = body;
 
     if (!nationalities || nationalities.length === 0) {
       return NextResponse.json(
@@ -70,8 +68,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate guide using OpenAI - Focused on paperwork
-    const prompt = `You are an expert immigration consultant specializing in paperwork and documentation. Generate a detailed, step-by-step paperwork guide for someone with the following nationalities: ${nationalities.join(', ')} who wants to move to ${destination}.
+    // Generate guide using Gemini - Focused on paperwork
+    let promptBase = `You are an expert immigration consultant specializing in paperwork and documentation. Generate a detailed, step-by-step paperwork guide for someone with the following nationalities: ${nationalities.join(', ')} who wants to move to ${destination}.`;
+
+    if (movingReason) {
+      promptBase += `\nThe user is moving for the following reason: "${movingReason}". Please tailor the paperwork requirements specifically for this purpose (e.g., student visa for studying, work permit for employment, family reunification, etc.).`;
+    }
+
+    const prompt = `${promptBase}
 
 IMPORTANT: Focus EXCLUSIVELY on the paperwork and documents required. Each step should be about completing and submitting specific forms and documents.
 
@@ -109,28 +113,26 @@ Make sure:
 - Include ALL necessary steps - do not limit the number of steps (create as many steps as needed for a complete paperwork guide)
 - Include actual PDF links when you know them, or format them realistically
 - Focus on forms, documents, certificates, and applications
-- Be specific about document names and requirements`;
+- Be specific about document names and requirements
+- Always respond with valid JSON only, no markdown formatting.`;
 
-    const openai = getOpenAIClient();
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o', // Using latest available model (ChatGPT-5 may not be available yet)
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert immigration consultant. Always respond with valid JSON only, no markdown formatting.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: 'json_object' },
+    const genAI = getGeminiClient();
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash',
+      generationConfig: {
+        temperature: 0.7,
+        responseMimeType: 'application/json',
+      },
     });
 
-    const responseContent = completion.choices[0]?.message?.content;
+    const fullPrompt = `You are an expert immigration consultant. ${prompt}`;
+
+    const result = await model.generateContent(fullPrompt);
+    const response = result.response;
+    const responseContent = response.text();
+
     if (!responseContent) {
-      throw new Error('No response from OpenAI');
+      throw new Error('No response from Gemini');
     }
 
     // Parse the JSON response
@@ -140,7 +142,7 @@ Make sure:
       const cleanedContent = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       guideData = JSON.parse(cleanedContent);
     } catch {
-      console.error('Failed to parse OpenAI response:', responseContent);
+      console.error('Failed to parse Gemini response:', responseContent);
       throw new Error('Failed to parse guide data');
     }
 
@@ -157,11 +159,11 @@ Make sure:
       nextStepCondition: step.nextStepCondition || '',
     }));
 
-    // Create guide in database
-    const guideId = await createGuide(uid, nationalities, destination, summary, steps);
-
+    // Return guide data - client will write to database with authenticated context
     return NextResponse.json({
-      guideId,
+      uid,
+      nationalities,
+      destination,
       summary,
       steps,
     });
